@@ -35,6 +35,7 @@ bool isFirstNumberInSearchNumbers(const std::string& line) {
 
 void processFiles() {
     std::vector<std::string> tab_names;
+    int fileCount=0;
     
     for (const auto& entry : fs::directory_iterator(txt_directory)) {
         const std::string& txt_file_name = entry.path().filename().string();
@@ -66,10 +67,20 @@ void processFiles() {
             }
             
             txt_file.close();
+
+            fileCount++;
+            if (fileCount % 10000 == 0) {
+                std::cout << "Processed files: " << fileCount << std::endl;
+            }
         }
     }
-    for(const auto name: tab_names){
-        fs::copy_file(jpg_directory+name, filtered_jpg_directory + name);
+    try{
+        for(const auto name: tab_names){
+            fs::copy_file(jpg_directory+name, filtered_jpg_directory + name);
+        }
+    } catch (const std::filesystem::filesystem_error& e) {
+            std::cout << "Error copying file: " << e.what() << std::endl;
+            continue;  // Kontynuuj pętlę dla następnego pliku
     }
 }
 
